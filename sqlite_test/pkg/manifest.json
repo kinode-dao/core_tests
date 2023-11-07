@@ -1,0 +1,10 @@
+[
+    {
+        "process_name": "sqlite_test",
+        "process_wasm_path": "/sqlite_test.wasm",
+        "on_panic": "Restart",
+        "request_networking": false,
+        "request_messaging": [],
+        "public": true
+    }
+]

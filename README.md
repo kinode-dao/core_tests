@@ -26,7 +26,7 @@ export UQBAR_HOME_DIR=~/uqbar-home
 export UQBAR_PASSWORD=secret
 export UQBAR_ETH_RPC=wss://eth-sepolia.g.alchemy.com/v2/<your-api-key>
 
-uqbar-run-tests --runtime-path $UQBAR_RUNTIME_DIR --home $UQBAR_HOME_DIR --runtime-args '["--password", '$UQBAR_PASSWORD', "--rpc", '$UQBAR_ETH_RPC']' '[["sqlite_test", "key_value_test"], ["key_value_test"]]'
+uqbar-run-tests --runtime-path $UQBAR_RUNTIME_DIR --home $UQBAR_HOME_DIR --runtime-args '["--password", "'$UQBAR_PASSWORD'", "--rpc", "'$UQBAR_ETH_RPC'"]' '[["sqlite_test", "key_value_test"], ["key_value_test"]]'
 ```
 
 ## Discussion

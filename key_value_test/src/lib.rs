@@ -57,9 +57,9 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                     wit::print_to_terminal(0, "key_value_test: New 0");
                     let _ = Request::new()
                         .target(key_value_address.clone())?
-                        .ipc_bytes(serde_json::to_vec(&kv::KeyValueMessage::New {
+                        .ipc_serde(&kv::KeyValueMessage::New {
                             db: DB_NAME.into()
-                        })?)
+                        })?
                         .send_and_await_response(15)??;
                     wit::print_to_terminal(0, "key_value_test: New done");
 
@@ -67,10 +67,10 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                     wit::print_to_terminal(0, "key_value_test: Write 0");
                     let _ = Request::new()
                         .target(key_value_address.clone())?
-                        .ipc_bytes(serde_json::to_vec(&kv::KeyValueMessage::Write {
+                        .ipc_serde(&kv::KeyValueMessage::Write {
                             db: DB_NAME.into(),
                             key: key.clone(),
-                        })?)
+                        })?
                         .payload_bytes(value.clone())
                         .send_and_await_response(15)??;
                     wit::print_to_terminal(0, "key_value_test: Write done");
@@ -79,10 +79,10 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                     wit::print_to_terminal(0, "key_value_test: Read 0");
                     let (_, response) = Request::new()
                         .target(key_value_address.clone())?
-                        .ipc_bytes(serde_json::to_vec(&kv::KeyValueMessage::Read {
+                        .ipc_serde(&kv::KeyValueMessage::Read {
                             db: DB_NAME.into(),
                             key: key.clone(),
-                        })?)
+                        })?
                         .send_and_await_response(15)??;
                     let payload = wit::get_payload().unwrap();
 
@@ -97,7 +97,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                     wit::print_to_terminal(0, &format!("key_value_test: Read done: {:?}\n{:?}", response, payload));
 
                     Response::new()
-                        .ipc_bytes(serde_json::to_vec(&TesterResponse::Pass).unwrap())
+                        .ipc_serde(&TesterResponse::Pass).unwrap()
                         .send()
                         .unwrap();
                 }
@@ -124,7 +124,7 @@ impl Guest for Component {
                     ).as_str());
 
                     Response::new()
-                        .ipc_bytes(serde_json::to_vec(&TesterResponse::Fail).unwrap())
+                        .ipc_serde(&TesterResponse::Fail).unwrap()
                         .send()
                         .unwrap();
                 },

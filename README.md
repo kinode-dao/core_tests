@@ -5,7 +5,7 @@ Tests for Uqbar core runtime and processes.
 ## Warnings
 
 1. Following the directions below will place your Uqbar node password and Alchemy API keys into your shell history.
-2. The `uqbar-run-tests` script deletes your node's filesystem: don't use on a node whose filesystem you care about.
+2. The `uqdev run-tests` script deletes your node's filesystem: don't use on a node whose filesystem you care about.
 
 ## Usage
 

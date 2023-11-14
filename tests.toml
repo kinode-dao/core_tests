@@ -1,6 +1,7 @@
 # Set to appropriate directories for your system
 
 runtime_path = "~/git/uqbar"
+is_runtime_print = true
 
 
 [[tests]]

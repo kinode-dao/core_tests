@@ -11,22 +11,13 @@ Tests for Uqbar core runtime and processes.
 
 Requires:
 * https://github.com/uqbar-dao/uqbar
-* https://github.com/uqbar-dao/uqbar_utils
+* https://github.com/uqbar-dao/uqdev
 
-After installing utils, use `uqbar-run-tests` to run test processes.
+After installing uqdev, modify `tests.toml` and use `uqdev run-tests` to run test processes.
 E.g., to run the `key_value_test` and `sqlite_test` here, run
 
 ```
-# Set to appropriate directories for your system
-export UQBAR_RUNTIME_DIR=~/git/uqbar
-export UQBAR_HOME_DIR=~/uqbar-home
-
-# Set runtime password & alchemy endpoint:
-# NOTE: these will be viewable in your shell history
-export UQBAR_PASSWORD=secret
-export UQBAR_ETH_RPC=wss://eth-sepolia.g.alchemy.com/v2/<your-api-key>
-
-uqbar-run-tests --runtime-path $UQBAR_RUNTIME_DIR --home $UQBAR_HOME_DIR --runtime-args '["--password", "'$UQBAR_PASSWORD'", "--rpc", "'$UQBAR_ETH_RPC'"]' '[["sqlite_test", "key_value_test"], ["key_value_test"]]'
+uqdev run-tests tests.toml
 ```
 
 ## Discussion

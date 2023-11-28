@@ -4,6 +4,9 @@ use uqbar_process_lib::{Address, ProcessId, Request, Response};
 use uqbar_process_lib::kernel_types as kt;
 use uqbar_process_lib::uqbar::process::standard as wit;
 
+mod tester_types;
+use tester_types as tt;
+
 wit_bindgen::generate!({
     path: "wit",
     world: "process",
@@ -150,10 +153,7 @@ impl Guest for Component {
                         e,
                     ).as_str());
 
-                    Response::new()
-                        .ipc_bytes(serde_json::to_vec(&TesterResponse::Fail).unwrap())
-                        .send()
-                        .unwrap();
+                    fail!("sqlite_test");
                 },
             };
         }

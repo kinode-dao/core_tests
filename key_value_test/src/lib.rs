@@ -3,6 +3,9 @@ use serde::{Deserialize, Serialize};
 use uqbar_process_lib::{Address, ProcessId, Request, Response};
 use uqbar_process_lib::uqbar::process::standard as wit;
 
+mod tester_types;
+use tester_types as tt;
+
 wit_bindgen::generate!({
     path: "wit",
     world: "process",
@@ -87,11 +90,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                     let payload = wit::get_payload().unwrap();
 
                     if payload.bytes != value {
-                        return Err(anyhow::anyhow!(
-                            "key_value_test: Read gave unexpected value: {:?} not {:?}",
-                            payload.bytes,
-                            value,
-                        ));
+                        fail!("key_value_test");
                     }
 
                     wit::print_to_terminal(0, &format!("key_value_test: Read done: {:?}\n{:?}", response, payload));
@@ -123,10 +122,7 @@ impl Guest for Component {
                         e,
                     ).as_str());
 
-                    Response::new()
-                        .ipc_bytes(serde_json::to_vec(&TesterResponse::Fail).unwrap())
-                        .send()
-                        .unwrap();
+                    fail!("key_value_test");
                 },
             };
         }

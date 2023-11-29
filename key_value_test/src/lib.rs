@@ -17,20 +17,7 @@ wit_bindgen::generate!({
 mod key_value_types;
 use key_value_types as kv;
 
-struct Component;
-
 const DB_NAME: &str = "foobar";
-
-#[derive(Debug, Serialize, Deserialize)]
-enum TesterRequest {
-    Run,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-enum TesterResponse {
-    Pass,
-    Fail,
-}
 
 fn handle_message (our: &Address) -> anyhow::Result<()> {
     let (source, message) = wit::receive().unwrap();
@@ -46,7 +33,9 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
         wit::Message::Response(_) => { unimplemented!() },
         wit::Message::Request(wit::Request { ipc, .. }) => {
             match serde_json::from_slice(&ipc)? {
-                TesterRequest::Run => {
+                tt::TesterRequest::KernelMessage(_) => {},
+                tt::TesterRequest::GetFullMessage(_) => {},
+                tt::TesterRequest::Run(_) => {
                     wit::print_to_terminal(0, "key_value_test: a");
                     let key_value_address = Address {
                         node: our.node.clone(),
@@ -96,10 +85,10 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                     wit::print_to_terminal(0, &format!("key_value_test: Read done: {:?}\n{:?}", response, payload));
 
                     Response::new()
-                        .ipc_bytes(serde_json::to_vec(&TesterResponse::Pass).unwrap())
+                        .ipc_bytes(serde_json::to_vec(&tt::TesterResponse::Pass).unwrap())
                         .send()
                         .unwrap();
-                }
+                },
             }
 
             Ok(())
@@ -107,6 +96,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
     }
 }
 
+struct Component;
 impl Guest for Component {
     fn init(our: String) {
         wit::print_to_terminal(0, "key_value_test: begin");

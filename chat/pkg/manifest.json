@@ -1,0 +1,12 @@
+[
+    {
+        "process_name": "chat",
+        "process_wasm_path": "/chat.wasm",
+        "on_panic": "Restart",
+        "request_networking": true,
+        "request_messaging": [
+            "net:sys:uqbar"
+        ],
+        "public": true
+    }
+]

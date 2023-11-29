@@ -1,0 +1,10 @@
+[
+    {
+        "process_name": "chat_test",
+        "process_wasm_path": "/chat_test.wasm",
+        "on_panic": "Restart",
+        "request_networking": false,
+        "request_messaging": [],
+        "public": true
+    }
+]

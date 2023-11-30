@@ -10,6 +10,11 @@ setup_package_paths = ["chat"]
 test_package_paths = ["sqlite_test", "key_value_test", "chat_test"]
 package_build_verbose = false
 
+[tests.network_router]
+
+port = 9001
+defects = "None"  # Plan to include Latency, Dropping, ..., All
+
 [[tests.nodes]]
 
 port = 8080
@@ -32,6 +37,11 @@ runtime_verbose = false
 setup_package_paths = []
 test_package_paths = ["key_value_test"]
 package_build_verbose = false
+
+[tests.network_router]
+
+port = 9001
+defects = "None"  # Plan to include Latency, Dropping, ..., All
 
 [[tests.nodes]]
 

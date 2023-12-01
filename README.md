@@ -22,16 +22,19 @@ uqdev run-tests tests.toml
 
 ## Discussion
 
-The above command will run the `key_value_test` twice and the `sqlite_test` once.
+The above command will run the `key_value_test` twice, and the `chat_test` and `sqlite_test` once.
 The purpose of running twice is to demonstrate the input syntax for tests.
 Tests are process packages with one process within.
 They accept a `TesterRequest::Run` `Request`.
-They are input to the `uqbar-run-tests` script in a string of a twice-nested json array containing paths to those tests.
-Each outer array will have the runtime reset to a fresh boot at the start.
-Each inner array can specify a series of tests to run without resetting the state between them.
+They are input to the `uqdev run-tests` script via a `tests.toml` file.
+
+The `tests.toml` file is an array of tests.
+Each test will have the runtime reset to a fresh boot at the start.
+Each `test_package_paths` within can specify a series of tests to run without resetting the state between them.
 
 So in the example given above, the following will occur:
-1. Reset state & launch node.
-2. Run `sqlite_test` and `key_value_test` without resetting state.
+1. Reset state & launch two fake nodes: `first.uq` and `second.uq`.
+2. Load `chat` into the "master" node: the first of the nodes specified, here, `first.uq`.
+3. Run `sqlite_test`, `key_value_test`, and `chat_test` without resetting state.
 3. Reset state & launch node.
 4. Run `key_value_test`.

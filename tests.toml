@@ -18,16 +18,16 @@ defects = "None"  # Plan to include Latency, Dropping, ..., All
 [[tests.nodes]]
 
 port = 8080
-home = "~/first-uqbar-home"
-password = "secret"
+home = "home/first"
+fake_node_name = "first.uq"
 rpc = "wss://eth-sepolia.g.alchemy.com/v2/<your-api-key>"
 runtime_verbose = false
 
 [[tests.nodes]]
 
 port = 8081
-home = "~/second-uqbar-home"
-password = "secret"
+home = "home/second"
+fake_node_name = "second.uq"
 rpc = "wss://eth-sepolia.g.alchemy.com/v2/<your-api-key>"
 runtime_verbose = false
 
@@ -46,7 +46,7 @@ defects = "None"  # Plan to include Latency, Dropping, ..., All
 [[tests.nodes]]
 
 port = 8080
-home = "~/first-uqbar-home"
-password = "secret"
+home = "home/first"
+fake_node_name = "first.uq"
 rpc = "wss://eth-sepolia.g.alchemy.com/v2/<your-api-key>"
 runtime_verbose = false

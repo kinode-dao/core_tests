@@ -76,7 +76,9 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                             .ipc(serde_json::to_vec(&ChatRequest::History)?)
                             .send_and_await_response(15)??;
                         let wit::Message::Response((response, _)) = response else { panic!("") };
-                        let ChatResponse::History { messages } = serde_json::from_slice(&response.ipc)? else { panic!("") };
+                        let ChatResponse::History { messages } = serde_json::from_slice(&response.ipc)? else {
+                            fail!("chat_test");
+                        };
 
                         let expected_messages = vec![(our.node.clone(), message)];
 

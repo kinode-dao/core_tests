@@ -51,19 +51,19 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
 
                         let our_chat_address = Address {
                             node: our.node.clone(),
-                            process: ProcessId::new("chat", "chat", "uqbar"),
+                            process: ProcessId::new(Some("chat"), "chat", "uqbar"),
                         };
                         let their_chat_address = Address {
                             node: node_names[1].clone(),
-                            process: ProcessId::new("chat", "chat", "uqbar"),
+                            process: ProcessId::new(Some("chat"), "chat", "uqbar"),
                         };
 
                         // Send
                         wit::print_to_terminal(0, "chat_test: b");
                         let message: String = "hello".into();
                         let _ = Request::new()
-                            .target(our_chat_address.clone())?
-                            .ipc_bytes(serde_json::to_vec(&ChatRequest::Send {
+                            .target(our_chat_address.clone())
+                            .ipc(serde_json::to_vec(&ChatRequest::Send {
                                 target: node_names[1].clone(),
                                 message: message.clone(),
                             })?)
@@ -72,8 +72,8 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                         // Get history from receiver & test
                         wit::print_to_terminal(0, "chat_test: c");
                         let (_, response) = Request::new()
-                            .target(their_chat_address.clone())?
-                            .ipc_bytes(serde_json::to_vec(&ChatRequest::History)?)
+                            .target(their_chat_address.clone())
+                            .ipc(serde_json::to_vec(&ChatRequest::History)?)
                             .send_and_await_response(15)??;
                         let wit::Message::Response((response, _)) = response else { panic!("") };
                         let ChatResponse::History { messages } = serde_json::from_slice(&response.ipc)? else { panic!("") };
@@ -85,7 +85,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                         }
                     }
                     Response::new()
-                        .ipc_bytes(serde_json::to_vec(&tt::TesterResponse::Pass).unwrap())
+                        .ipc(serde_json::to_vec(&tt::TesterResponse::Pass).unwrap())
                         .send()
                         .unwrap();
                 },
@@ -103,6 +103,11 @@ impl Guest for Component {
         wit::print_to_terminal(0, "chat_test: begin");
 
         let our = Address::from_str(&our).unwrap();
+
+        wit::create_capability(
+            &ProcessId::new(Some("chat"), "chat", "uqbar"),
+            &"\"messaging\"".into(),
+        );
 
         loop {
             match handle_message(&our) {

@@ -49,20 +49,20 @@ fn handle_message (
                             .target(wit::Address {
                                 node: target.clone(),
                                 process: ProcessId::from_str("chat:chat:uqbar")?,
-                            })?
-                            .ipc_bytes(ipc.clone())
+                            })
+                            .ipc(ipc.clone())
                             .send_and_await_response(5)
                             .unwrap();
                     }
                     Response::new()
-                        .ipc_bytes(serde_json::to_vec(&ChatResponse::Ack).unwrap())
+                        .ipc(serde_json::to_vec(&ChatResponse::Ack).unwrap())
                         .send()
                         .unwrap();
                 },
                 ChatRequest::History => {
                     wit::print_to_terminal(0, "chat: d");
                     Response::new()
-                        .ipc_bytes(serde_json::to_vec(&ChatResponse::History {
+                        .ipc(serde_json::to_vec(&ChatResponse::History {
                             messages: message_archive.clone(),
                         }).unwrap())
                         .send()

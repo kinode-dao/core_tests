@@ -39,7 +39,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                     wit::print_to_terminal(0, "key_value_test: a");
                     let key_value_address = Address {
                         node: our.node.clone(),
-                        process: ProcessId::new("key_value", "key_value", "uqbar"),
+                        process: ProcessId::new(Some("key_value"), "key_value", "uqbar"),
                     };
 
                     let key = vec![1, 2, 3];
@@ -48,8 +48,8 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                     // New
                     wit::print_to_terminal(0, "key_value_test: New 0");
                     let _ = Request::new()
-                        .target(key_value_address.clone())?
-                        .ipc_bytes(serde_json::to_vec(&kv::KeyValueMessage::New {
+                        .target(key_value_address.clone())
+                        .ipc(serde_json::to_vec(&kv::KeyValueMessage::New {
                             db: DB_NAME.into()
                         })?)
                         .send_and_await_response(15)??;
@@ -58,8 +58,8 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                     // Write
                     wit::print_to_terminal(0, "key_value_test: Write 0");
                     let _ = Request::new()
-                        .target(key_value_address.clone())?
-                        .ipc_bytes(serde_json::to_vec(&kv::KeyValueMessage::Write {
+                        .target(key_value_address.clone())
+                        .ipc(serde_json::to_vec(&kv::KeyValueMessage::Write {
                             db: DB_NAME.into(),
                             key: key.clone(),
                         })?)
@@ -70,8 +70,8 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                     // Read
                     wit::print_to_terminal(0, "key_value_test: Read 0");
                     let (_, response) = Request::new()
-                        .target(key_value_address.clone())?
-                        .ipc_bytes(serde_json::to_vec(&kv::KeyValueMessage::Read {
+                        .target(key_value_address.clone())
+                        .ipc(serde_json::to_vec(&kv::KeyValueMessage::Read {
                             db: DB_NAME.into(),
                             key: key.clone(),
                         })?)
@@ -85,7 +85,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                     wit::print_to_terminal(0, &format!("key_value_test: Read done: {:?}\n{:?}", response, payload));
 
                     Response::new()
-                        .ipc_bytes(serde_json::to_vec(&tt::TesterResponse::Pass).unwrap())
+                        .ipc(serde_json::to_vec(&tt::TesterResponse::Pass).unwrap())
                         .send()
                         .unwrap();
                 },
@@ -102,6 +102,11 @@ impl Guest for Component {
         wit::print_to_terminal(0, "key_value_test: begin");
 
         let our = Address::from_str(&our).unwrap();
+
+        wit::create_capability(
+            &ProcessId::new(Some("key_value"), "key_value", "uqbar"),
+            &"\"messaging\"".into(),
+        );
 
         loop {
             match handle_message(&our) {

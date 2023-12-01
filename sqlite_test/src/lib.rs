@@ -1,7 +1,4 @@
-use serde::{Deserialize, Serialize};
-
 use uqbar_process_lib::{Address, ProcessId, Request, Response};
-use uqbar_process_lib::kernel_types as kt;
 use uqbar_process_lib::uqbar::process::standard as wit;
 
 mod tester_types;
@@ -14,10 +11,6 @@ wit_bindgen::generate!({
         world: Component,
     },
 });
-
-// use bindings::component::uq_process::types::*;
-// use bindings::{get_payload, Guest, print_to_terminal, receive, send_and_await_response, send_response};
-use crate::sqlite_types::Deserializable;
 
 mod sqlite_types;
 use sqlite_types as sq;
@@ -34,7 +27,6 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
         ));
     }
 
-
     match message {
         wit::Message::Response(_) => { unimplemented!() },
         wit::Message::Request(wit::Request { ipc, .. }) => {
@@ -45,75 +37,85 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                     wit::print_to_terminal(0, "sqlite_test: a");
                     let sqlite_address = Address {
                         node: our.node.clone(),
-                        process: ProcessId::new("sqlite", "sqlite", "uqbar"),
+                        process: ProcessId::new(Some("sqlite"), "sqlite", "uqbar"),
                     };
 
                     // New
                     wit::print_to_terminal(0, "sqlite_test: New 0");
                     let _ = Request::new()
-                        .target(sqlite_address.clone())?
-                        .ipc_bytes(serde_json::to_vec(&sq::SqliteMessage::New {
+                        .target(sqlite_address.clone())
+                        .ipc(serde_json::to_vec(&sq::SqliteMessage::New {
                             db: DB_NAME.into()
                         })?)
-                        .send_and_await_response(15)??;
+                        .send_and_await_response(5)??;
                     wit::print_to_terminal(0, "sqlite_test: New done");
 
                     // Write
                     wit::print_to_terminal(0, "sqlite_test: Write 0");
                     let create_table = "CREATE TABLE person (id INTEGER PRIMARY KEY, name TEXT NOT NULL, data BLOB)".into();
                     let insert_data = "INSERT INTO person (name, data) VALUES (?1, ?2)".to_string();
-                    let mut insert_data_vec = vec![
-                        sq::SqlValue::Text("hello".into()),
-                        sq::SqlValue::Blob(vec![1, 2, 3]),
-                    ];
-                    let insert_data_bytes = rmp_serde::to_vec(&insert_data_vec).unwrap();
+                    let insert_data_json = serde_json::json!([
+                        "hello",
+                        format!("{}", base64::encode(vec![1, 2, 3])),
+                    ]);
+                    let insert_data_bytes = serde_json::to_vec(&insert_data_json)?;
                     let _ = Request::new()
-                        .target(sqlite_address.clone())?
-                        .ipc_bytes(serde_json::to_vec(&sq::SqliteMessage::Write {
+                        .target(sqlite_address.clone())
+                        .ipc(serde_json::to_vec(&sq::SqliteMessage::Write {
                             db: DB_NAME.into(),
                             statement: create_table,
+                            tx_id: None,
                         })?)
-                        .send_and_await_response(15)??;
+                        .send_and_await_response(5)??;
                     wit::print_to_terminal(0, "sqlite_test: Write 1");
                     let _ = Request::new()
-                        .target(sqlite_address.clone())?
-                        .ipc_bytes(serde_json::to_vec(&sq::SqliteMessage::Write {
+                        .target(sqlite_address.clone())
+                        .ipc(serde_json::to_vec(&sq::SqliteMessage::Write {
                             db: DB_NAME.into(),
                             statement: insert_data,
+                            tx_id: None,
                         })?)
                         .payload(wit::Payload {
                             mime: None,
                             bytes: insert_data_bytes,
                         })
-                        .send_and_await_response(15)??;
+                        .send_and_await_response(5)??;
                     wit::print_to_terminal(0, "sqlite_test: Write done");
 
                     // Read
                     wit::print_to_terminal(0, "sqlite_test: Read 0");
-                    let select_data = "SELECT id, name, data FROM person".into();
+                    let select_data = "SELECT name, data FROM person".into();
                     let (_, response) = Request::new()
-                        .target(sqlite_address.clone())?
-                        .ipc_bytes(serde_json::to_vec(&sq::SqliteMessage::Read {
+                        .target(sqlite_address.clone())
+                        .ipc(serde_json::to_vec(&sq::SqliteMessage::Read {
                             db: DB_NAME.into(),
                             query: select_data,
                         })?)
-                        .send_and_await_response(15)??;
+                        .send_and_await_response(5)??;
                     let payload = wit::get_payload().unwrap();
-                    let payload = Vec::<Vec::<sq::SqlValue>>::from_serialized(&payload.bytes)?;
-
-                    insert_data_vec.insert(0, sq::SqlValue::Integer(1));
-                    if !payload.contains(&insert_data_vec)  {
-                        return Err(anyhow::anyhow!(
-                            "sqlite_test: Read gave unexpected value: {:?} not amongst {:?}",
-                            insert_data_vec,
-                            payload,
-                        ));
+                    let serde_json::Value::Array(payload) = serde_json::from_slice(&payload.bytes)? else {
+                        fail!("sqlite_test");
+                    };
+                    if payload.len() != 1 {
+                        fail!("sqlite_test");
+                    }
+                    let Some(name) = payload[0].get("name") else {
+                        fail!("sqlite_test");
+                    };
+                    let Some(data) = payload[0].get("data") else {
+                        fail!("sqlite_test");
+                    };
+                    if name != &insert_data_json[0] {
+                        fail!("sqlite_test");
+                    }
+                    if data != &insert_data_json[1] {
+                        fail!("sqlite_test");
                     }
 
                     wit::print_to_terminal(0, &format!("sqlite_test: Read done: {:?}\n{:?}", response, payload));
 
                     Response::new()
-                        .ipc_bytes(serde_json::to_vec(&tt::TesterResponse::Pass).unwrap())
+                        .ipc(serde_json::to_vec(&tt::TesterResponse::Pass).unwrap())
                         .send()
                         .unwrap();
                 },
@@ -133,6 +135,11 @@ impl Guest for Component {
         wit::print_to_terminal(0, "sqlite_test: begin");
 
         let our = Address::from_str(&our).unwrap();
+
+        wit::create_capability(
+            &ProcessId::new(Some("sqlite"), "sqlite", "uqbar"),
+            &"\"messaging\"".into(),
+        );
 
         loop {
             match handle_message(&our) {

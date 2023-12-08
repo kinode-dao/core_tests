@@ -1,6 +1,4 @@
-# Set to appropriate directories for your system
-
-runtime_path = "~/git/uqbar"
+runtime = { FetchVersion = "0.4.0-1cbc110" }
 runtime_build_verbose = false
 
 

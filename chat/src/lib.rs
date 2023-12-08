@@ -39,12 +39,10 @@ fn handle_message (
         wit::Message::Request(wit::Request { ref ipc, .. }) => {
             match serde_json::from_slice(ipc)? {
                 ChatRequest::Send { ref target, ref message } => {
-                    wit::print_to_terminal(0, "chat: a");
                     if target == &our.node {
-                        wit::print_to_terminal(0, "chat: b");
+                        wit::print_to_terminal(0, &format!("chat|{}: {}", source.node, message));
                         message_archive.push((source.node.clone(), message.clone()));
                     } else {
-                        wit::print_to_terminal(0, "chat: c");
                         let _ = Request::new()
                             .target(wit::Address {
                                 node: target.clone(),
@@ -60,7 +58,6 @@ fn handle_message (
                         .unwrap();
                 },
                 ChatRequest::History => {
-                    wit::print_to_terminal(0, "chat: d");
                     Response::new()
                         .ipc(serde_json::to_vec(&ChatResponse::History {
                             messages: message_archive.clone(),
@@ -71,7 +68,6 @@ fn handle_message (
             }
         },
     }
-    wit::print_to_terminal(0, "chat: e");
     Ok(())
 }
 

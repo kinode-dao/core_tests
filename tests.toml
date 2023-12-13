@@ -1,4 +1,5 @@
-runtime = { FetchVersion = "0.4.0-5903a5a" }
+# runtime = { FetchVersion = "0.4.0-5903a5a" }
+runtime = { RepoPath = "~/path/to/repo/uqbar" }
 runtime_build_verbose = false
 
 
@@ -7,6 +8,7 @@ runtime_build_verbose = false
 setup_package_paths = ["chat"]
 test_package_paths = ["sqlite_test", "key_value_test", "chat_test"]
 package_build_verbose = false
+timeout_secs = 5
 
 [tests.network_router]
 
@@ -33,6 +35,7 @@ runtime_verbose = false
 setup_package_paths = []
 test_package_paths = ["key_value_test"]
 package_build_verbose = false
+timeout_secs = 5
 
 [tests.network_router]
 

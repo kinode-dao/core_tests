@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use uqbar_process_lib::{Address, ProcessId, Request, Response};
+use uqbar_process_lib::{Address, Message, ProcessId, Request, Response};
 use uqbar_process_lib::uqbar::process::standard as wit;
 
 mod tester_types;
@@ -43,7 +43,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
             match serde_json::from_slice(&ipc)? {
                 tt::TesterRequest::KernelMessage(_) => {},
                 tt::TesterRequest::GetFullMessage(_) => {},
-                tt::TesterRequest::Run(node_names) => {
+                tt::TesterRequest::Run { input_node_names: node_names, .. } => {
                     wit::print_to_terminal(0, "chat_test: a");
                     assert!(node_names.len() >= 2);
                     if our.node == node_names[0] {
@@ -67,16 +67,16 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                                 target: node_names[1].clone(),
                                 message: message.clone(),
                             })?)
-                            .send_and_await_response(15)??;
+                            .send_and_await_response(15)?.unwrap();
 
                         // Get history from receiver & test
                         wit::print_to_terminal(0, "chat_test: c");
-                        let (_, response) = Request::new()
+                        let response = Request::new()
                             .target(their_chat_address.clone())
                             .ipc(serde_json::to_vec(&ChatRequest::History)?)
-                            .send_and_await_response(15)??;
-                        let wit::Message::Response((response, _)) = response else { panic!("") };
-                        let ChatResponse::History { messages } = serde_json::from_slice(&response.ipc)? else {
+                            .send_and_await_response(15)?.unwrap();
+                        let Message::Response { ipc, .. } = response else { panic!("") };
+                        let ChatResponse::History { messages } = serde_json::from_slice(&ipc)? else {
                             fail!("chat_test");
                         };
 

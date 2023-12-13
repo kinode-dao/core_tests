@@ -49,7 +49,7 @@ fn handle_message (
                                 process: ProcessId::from_str("chat:chat:uqbar")?,
                             })
                             .ipc(ipc.clone())
-                            .send_and_await_response(5)
+                            .send_and_await_response(5)?
                             .unwrap();
                     }
                     Response::new()

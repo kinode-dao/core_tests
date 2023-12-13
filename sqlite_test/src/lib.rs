@@ -33,7 +33,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
             match serde_json::from_slice(&ipc)? {
                 tt::TesterRequest::KernelMessage(_) => {},
                 tt::TesterRequest::GetFullMessage(_) => {},
-                tt::TesterRequest::Run(_) => {
+                tt::TesterRequest::Run { .. } => {
                     wit::print_to_terminal(0, "sqlite_test: a");
                     let sqlite_address = Address {
                         node: our.node.clone(),
@@ -47,7 +47,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                         .ipc(serde_json::to_vec(&sq::SqliteMessage::New {
                             db: DB_NAME.into()
                         })?)
-                        .send_and_await_response(5)??;
+                        .send_and_await_response(5)?.unwrap();
                     wit::print_to_terminal(0, "sqlite_test: New done");
 
                     // Write
@@ -66,7 +66,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                             statement: create_table,
                             tx_id: None,
                         })?)
-                        .send_and_await_response(5)??;
+                        .send_and_await_response(5)?.unwrap();
                     wit::print_to_terminal(0, "sqlite_test: Write 1");
                     let _ = Request::new()
                         .target(sqlite_address.clone())
@@ -79,19 +79,19 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                             mime: None,
                             bytes: insert_data_bytes,
                         })
-                        .send_and_await_response(5)??;
+                        .send_and_await_response(5)?.unwrap();
                     wit::print_to_terminal(0, "sqlite_test: Write done");
 
                     // Read
                     wit::print_to_terminal(0, "sqlite_test: Read 0");
                     let select_data = "SELECT name, data FROM person".into();
-                    let (_, response) = Request::new()
+                    let response = Request::new()
                         .target(sqlite_address.clone())
                         .ipc(serde_json::to_vec(&sq::SqliteMessage::Read {
                             db: DB_NAME.into(),
                             query: select_data,
                         })?)
-                        .send_and_await_response(5)??;
+                        .send_and_await_response(5)?.unwrap();
                     let payload = wit::get_payload().unwrap();
                     let serde_json::Value::Array(payload) = serde_json::from_slice(&payload.bytes)? else {
                         fail!("sqlite_test");

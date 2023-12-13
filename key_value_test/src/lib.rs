@@ -35,7 +35,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
             match serde_json::from_slice(&ipc)? {
                 tt::TesterRequest::KernelMessage(_) => {},
                 tt::TesterRequest::GetFullMessage(_) => {},
-                tt::TesterRequest::Run(_) => {
+                tt::TesterRequest::Run { .. } => {
                     wit::print_to_terminal(0, "key_value_test: a");
                     let key_value_address = Address {
                         node: our.node.clone(),
@@ -52,7 +52,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                         .ipc(serde_json::to_vec(&kv::KeyValueMessage::New {
                             db: DB_NAME.into()
                         })?)
-                        .send_and_await_response(15)??;
+                        .send_and_await_response(15)?.unwrap();
                     wit::print_to_terminal(0, "key_value_test: New done");
 
                     // Write
@@ -64,18 +64,18 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                             key: key.clone(),
                         })?)
                         .payload_bytes(value.clone())
-                        .send_and_await_response(15)??;
+                        .send_and_await_response(15)?.unwrap();
                     wit::print_to_terminal(0, "key_value_test: Write done");
 
                     // Read
                     wit::print_to_terminal(0, "key_value_test: Read 0");
-                    let (_, response) = Request::new()
+                    let response = Request::new()
                         .target(key_value_address.clone())
                         .ipc(serde_json::to_vec(&kv::KeyValueMessage::Read {
                             db: DB_NAME.into(),
                             key: key.clone(),
                         })?)
-                        .send_and_await_response(15)??;
+                        .send_and_await_response(15)?.unwrap();
                     let payload = wit::get_payload().unwrap();
 
                     if payload.bytes != value {

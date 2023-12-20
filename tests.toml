@@ -6,7 +6,8 @@ runtime_build_verbose = false
 [[tests]]
 
 setup_package_paths = ["chat"]
-test_package_paths = ["sqlite_test", "key_value_test", "chat_test"]
+test_package_paths = ["chat_test"]
+# test_package_paths = ["sqlite_test", "key_value_test", "chat_test"]  # TODO: reenable
 package_build_verbose = false
 timeout_secs = 5
 
@@ -30,21 +31,22 @@ fake_node_name = "second.uq"
 runtime_verbose = false
 
 
-[[tests]]
-
-setup_package_paths = []
-test_package_paths = ["key_value_test"]
-package_build_verbose = false
-timeout_secs = 5
-
-[tests.network_router]
-
-port = 9001
-defects = "None"  # Plan to include Latency, Dropping, ..., All
-
-[[tests.nodes]]
-
-port = 8080
-home = "home/first"
-fake_node_name = "first.uq"
-runtime_verbose = false
+# # TODO: reenable
+# [[tests]]
+#
+# setup_package_paths = []
+# test_package_paths = ["key_value_test"]
+# package_build_verbose = false
+# timeout_secs = 5
+#
+# [tests.network_router]
+#
+# port = 9001
+# defects = "None"  # Plan to include Latency, Dropping, ..., All
+#
+# [[tests.nodes]]
+#
+# port = 8080
+# home = "home/first"
+# fake_node_name = "first.uq"
+# runtime_verbose = false

@@ -1,7 +1,10 @@
 */target
+*/*/target
 *.swp
 *.swo
 */pkg/*.wasm
 home/
 */wit
 */wasi_snapshot_preview1.wasm
+*/*/wit
+*/*/wasi_snapshot_preview1.wasm

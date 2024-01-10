@@ -1,23 +1,23 @@
 # core_tests
 
-Tests for Uqbar core runtime and processes.
+Tests for NectarOS core runtime and processes.
 
 ## Warnings
 
-1. Following the directions below will place your Uqbar node password and Alchemy API keys into your shell history.
-2. The `uqdev run-tests` script deletes your node's filesystem: don't use on a node whose filesystem you care about.
+1. Following the directions below will place your Nectar node password and Alchemy API keys into your shell history.
+2. The `necdev run-tests` script deletes your node's filesystem: don't use on a node whose filesystem you care about.
 
 ## Usage
 
 Requires:
-* https://github.com/uqbar-dao/uqbar
-* https://github.com/uqbar-dao/uqdev
+* https://github.com/uqbar-dao/nectar
+* https://github.com/uqbar-dao/necdev
 
-After installing uqdev, modify `tests.toml` and use `uqdev run-tests` to run test processes.
-E.g., to run the `key_value_test` and `sqlite_test` here, run
+After installing `necdev`, modify `tests.toml` and use `necdev run-tests` to run test processes.
+E.g., to run the `chat_test` here, run
 
 ```
-uqdev run-tests tests.toml
+necdev run-tests tests.toml
 ```
 
 ## Discussion

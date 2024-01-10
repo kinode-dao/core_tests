@@ -6,8 +6,8 @@ runtime_build_verbose = false
 [[tests]]
 
 setup_package_paths = ["chat"]
-test_package_paths = ["chat_test"]
-# test_package_paths = ["sqlite_test", "key_value_test", "chat_test"]  # TODO: reenable
+test_packages = [{ path = "chat_test", grant_capabilities = ["chat:chat:nectar"] }]
+# test_package_paths = [{ path = "sqlite_test", grant_capabilities = [] }, { path = "key_value_test", grant_capabilities = [] }, { path = "chat_test", "grant_capabilities" = ["chat:chat:nectar"] }]  # TODO: reenable
 package_build_verbose = false
 timeout_secs = 5
 
@@ -35,7 +35,7 @@ runtime_verbose = false
 # [[tests]]
 #
 # setup_package_paths = []
-# test_package_paths = ["key_value_test"]
+# test_package_paths = [{ path = "key_value_test", grant_capabilities = [] }]
 # package_build_verbose = false
 # timeout_secs = 5
 #

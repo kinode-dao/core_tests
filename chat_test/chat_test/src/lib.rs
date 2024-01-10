@@ -1,7 +1,7 @@
+use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 
-use uqbar_process_lib::{Address, Message, ProcessId, Request, Response};
-use uqbar_process_lib::uqbar::process::standard as wit;
+use nectar_process_lib::{await_message, print_to_terminal, Address, Message, ProcessId, Request, Response};
 
 mod tester_types;
 use tester_types as tt;
@@ -28,55 +28,54 @@ enum ChatResponse {
 type MessageArchive = Vec<(String, String)>;
 
 fn handle_message (our: &Address) -> anyhow::Result<()> {
-    let (source, message) = wit::receive().unwrap();
-
-    if our.node != source.node {
-        return Err(anyhow::anyhow!(
-            "rejecting foreign Message from {:?}",
-            source,
-        ));
-    }
+    let message = await_message().unwrap();
 
     match message {
-        wit::Message::Response(_) => { unimplemented!() },
-        wit::Message::Request(wit::Request { ipc, .. }) => {
-            match serde_json::from_slice(&ipc)? {
+        Message::Response { .. } => { unimplemented!() },
+        Message::Request { ref source, ref body, .. } => {
+            if our.node != source.node {
+                return Err(anyhow::anyhow!(
+                    "rejecting foreign Message from {:?}",
+                    source,
+                ));
+            }
+            match serde_json::from_slice(body)? {
                 tt::TesterRequest::KernelMessage(_) => {},
                 tt::TesterRequest::GetFullMessage(_) => {},
                 tt::TesterRequest::Run { input_node_names: node_names, .. } => {
-                    wit::print_to_terminal(0, "chat_test: a");
+                    print_to_terminal(0, "chat_test: a");
                     assert!(node_names.len() >= 2);
                     if our.node == node_names[0] {
                         // we are master node
 
                         let our_chat_address = Address {
                             node: our.node.clone(),
-                            process: ProcessId::new(Some("chat"), "chat", "uqbar"),
+                            process: ProcessId::new(Some("chat"), "chat", "nectar"),
                         };
                         let their_chat_address = Address {
                             node: node_names[1].clone(),
-                            process: ProcessId::new(Some("chat"), "chat", "uqbar"),
+                            process: ProcessId::new(Some("chat"), "chat", "nectar"),
                         };
 
                         // Send
-                        wit::print_to_terminal(0, "chat_test: b");
+                        print_to_terminal(0, "chat_test: b");
                         let message: String = "hello".into();
                         let _ = Request::new()
                             .target(our_chat_address.clone())
-                            .ipc(serde_json::to_vec(&ChatRequest::Send {
+                            .body(serde_json::to_vec(&ChatRequest::Send {
                                 target: node_names[1].clone(),
                                 message: message.clone(),
                             })?)
                             .send_and_await_response(15)?.unwrap();
 
                         // Get history from receiver & test
-                        wit::print_to_terminal(0, "chat_test: c");
+                        print_to_terminal(0, "chat_test: c");
                         let response = Request::new()
                             .target(their_chat_address.clone())
-                            .ipc(serde_json::to_vec(&ChatRequest::History)?)
+                            .body(serde_json::to_vec(&ChatRequest::History)?)
                             .send_and_await_response(15)?.unwrap();
-                        let Message::Response { ipc, .. } = response else { panic!("") };
-                        let ChatResponse::History { messages } = serde_json::from_slice(&ipc)? else {
+                        let Message::Response { ref body, .. } = response else { panic!("") };
+                        let ChatResponse::History { messages } = serde_json::from_slice(body)? else {
                             fail!("chat_test");
                         };
 
@@ -87,7 +86,7 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
                         }
                     }
                     Response::new()
-                        .ipc(serde_json::to_vec(&tt::TesterResponse::Pass).unwrap())
+                        .body(serde_json::to_vec(&tt::TesterResponse::Pass).unwrap())
                         .send()
                         .unwrap();
                 },
@@ -102,20 +101,20 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
 struct Component;
 impl Guest for Component {
     fn init(our: String) {
-        wit::print_to_terminal(0, "chat_test: begin");
+        print_to_terminal(0, "chat_test: begin");
 
         let our = Address::from_str(&our).unwrap();
 
-        wit::create_capability(
-            &ProcessId::new(Some("chat"), "chat", "uqbar"),
-            &"\"messaging\"".into(),
-        );
+        //wit::create_capability(
+        //    &ProcessId::new(Some("chat"), "chat", "nectar"),
+        //    &"\"messaging\"".into(),
+        //);
 
         loop {
             match handle_message(&our) {
                 Ok(()) => {},
                 Err(e) => {
-                    wit::print_to_terminal(0, format!(
+                    print_to_terminal(0, format!(
                         "chat_test: error: {:?}",
                         e,
                     ).as_str());

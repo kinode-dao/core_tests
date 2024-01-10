@@ -4,7 +4,10 @@
         "process_wasm_path": "/chat_test.wasm",
         "on_exit": "Restart",
         "request_networking": false,
-        "request_messaging": [],
+        "request_capabilities": [],
+        "grant_capabilities": [
+            "chat:chat:nectar"
+        ],
         "public": true
     }
 ]

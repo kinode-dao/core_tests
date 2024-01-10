@@ -1,5 +1,5 @@
 # runtime = { FetchVersion = "0.4.0-5903a5a" }
-runtime = { RepoPath = "~/path/to/repo/uqbar" }
+runtime = { RepoPath = "~/path/to/repo/nectar" }
 runtime_build_verbose = false
 
 
@@ -20,14 +20,14 @@ defects = "None"  # Plan to include Latency, Dropping, ..., All
 
 port = 8080
 home = "home/first"
-fake_node_name = "first.uq"
+fake_node_name = "first.nec"
 runtime_verbose = false
 
 [[tests.nodes]]
 
 port = 8081
 home = "home/second"
-fake_node_name = "second.uq"
+fake_node_name = "second.nec"
 runtime_verbose = false
 
 
@@ -48,5 +48,5 @@ runtime_verbose = false
 #
 # port = 8080
 # home = "home/first"
-# fake_node_name = "first.uq"
+# fake_node_name = "first.nec"
 # runtime_verbose = false

@@ -1,52 +1,50 @@
-# runtime = { FetchVersion = "0.4.0-5903a5a" }
-runtime = { RepoPath = "~/path/to/repo/nectar" }
+# runtime = { FetchVersion = "0.5.0" }
+runtime = { RepoPath = "~/path/to/kinode" }
 runtime_build_verbose = false
 
 
 [[tests]]
 
 setup_package_paths = ["chat"]
-test_packages = [{ path = "chat_test", grant_capabilities = ["chat:chat:nectar"] }]
-# test_package_paths = [{ path = "sqlite_test", grant_capabilities = [] }, { path = "key_value_test", grant_capabilities = [] }, { path = "chat_test", "grant_capabilities" = ["chat:chat:nectar"] }]  # TODO: reenable
+test_packages = [{ path = "chat_test", grant_capabilities = ["chat:chat:template.os"] }]
+# test_packages = [
+#     { path = "chat_test", "grant_capabilities" = ["chat:chat:template.os"] }
+#     { path = "key_value_test", grant_capabilities = [] },
+#     { path = "sqlite_test", grant_capabilities = [] },
+# ]
 package_build_verbose = false
 timeout_secs = 5
-
-[tests.network_router]
-
-port = 9001
-defects = "None"  # Plan to include Latency, Dropping, ..., All
+# Plan to include defects = Latency, Dropping, ..., All
+network_router = { port = 9001, defects = "None" }
 
 [[tests.nodes]]
 
 port = 8080
 home = "home/first"
-fake_node_name = "first.nec"
+fake_node_name = "first.os"
 runtime_verbose = false
 
 [[tests.nodes]]
 
 port = 8081
 home = "home/second"
-fake_node_name = "second.nec"
+fake_node_name = "second.os"
 runtime_verbose = false
 
 
-# # TODO: reenable
 # [[tests]]
 #
 # setup_package_paths = []
-# test_package_paths = [{ path = "key_value_test", grant_capabilities = [] }]
+# test_packages = [
+#     { path = "key_value_test", grant_capabilities = [] }
+# ]
 # package_build_verbose = false
 # timeout_secs = 5
-#
-# [tests.network_router]
-#
-# port = 9001
-# defects = "None"  # Plan to include Latency, Dropping, ..., All
+# network_router = { port = 9001, defects = "None" }
 #
 # [[tests.nodes]]
 #
 # port = 8080
 # home = "home/first"
-# fake_node_name = "first.nec"
+# fake_node_name = "first.os"
 # runtime_verbose = false

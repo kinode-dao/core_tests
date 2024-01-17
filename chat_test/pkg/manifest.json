@@ -6,7 +6,7 @@
         "request_networking": false,
         "request_capabilities": [],
         "grant_capabilities": [
-            "chat:chat:nectar"
+            "chat:chat:template.os"
         ],
         "public": true
     }

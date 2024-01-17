@@ -24,9 +24,4 @@ wit-bindgen = { git = "https://github.com/bytecodealliance/wit-bindgen", rev = "
 crate-type = ["cdylib"]
 
 [package.metadata.component]
-package = "uqbar:process"
-
-[package.metadata.component.target]
-path = "wit"
-
-[package.metadata.component.dependencies]
+package = "kinode:process"

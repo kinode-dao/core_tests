@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 
-use nectar_process_lib::{await_message, print_to_terminal, Address, Message, ProcessId, Request, Response};
+use kinode_process_lib::{await_message, print_to_terminal, Address, Message, ProcessId, Request, Response};
 
 mod tester_types;
 use tester_types as tt;
@@ -50,11 +50,11 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
 
                         let our_chat_address = Address {
                             node: our.node.clone(),
-                            process: ProcessId::new(Some("chat"), "chat", "nectar"),
+                            process: ProcessId::new(Some("chat"), "chat", "template.os"),
                         };
                         let their_chat_address = Address {
                             node: node_names[1].clone(),
-                            process: ProcessId::new(Some("chat"), "chat", "nectar"),
+                            process: ProcessId::new(Some("chat"), "chat", "template.os"),
                         };
 
                         // Send
@@ -104,11 +104,6 @@ impl Guest for Component {
         print_to_terminal(0, "chat_test: begin");
 
         let our = Address::from_str(&our).unwrap();
-
-        //wit::create_capability(
-        //    &ProcessId::new(Some("chat"), "chat", "nectar"),
-        //    &"\"messaging\"".into(),
-        //);
 
         loop {
             match handle_message(&our) {

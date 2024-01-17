@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use serde::{Serialize, Deserialize};
 
-use nectar_process_lib::{await_message, print_to_terminal, Address, Message, ProcessId, Request, Response};
+use kinode_process_lib::{await_message, print_to_terminal, Address, Message, ProcessId, Request, Response};
 
 wit_bindgen::generate!({
     path: "wit",
@@ -46,7 +46,7 @@ fn handle_message (
                         let _ = Request::new()
                             .target(Address {
                                 node: target.clone(),
-                                process: ProcessId::from_str("chat:chat:nectar")?,
+                                process: ProcessId::from_str("chat:chat:template.os")?,
                             })
                             .body(body.clone())
                             .send_and_await_response(5)?

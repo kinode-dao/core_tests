@@ -1,5 +1,4 @@
-# runtime = { FetchVersion = "0.5.0" }
-runtime = { RepoPath = "~/path/to/kinode" }
+runtime = { FetchVersion = "v0.5.0-alpha" }
 runtime_build_verbose = false
 
 

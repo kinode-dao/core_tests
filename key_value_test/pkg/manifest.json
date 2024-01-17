@@ -4,7 +4,8 @@
         "process_wasm_path": "/sqlite_test.wasm",
         "on_exit": "Restart",
         "request_networking": false,
-        "request_messaging": [],
+        "request_capabilities": [],
+        "grant_capabilities": [],
         "public": true
     }
 ]

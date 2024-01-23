@@ -1,4 +1,4 @@
-runtime = { FetchVersion = "v0.5.0-alpha" }
+runtime = { FetchVersion = "latest" }
 runtime_build_verbose = false
 
 

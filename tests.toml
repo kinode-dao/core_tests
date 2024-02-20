@@ -3,7 +3,6 @@ runtime_build_verbose = false
 
 
 [[tests]]
-
 setup_package_paths = ["chat"]
 test_packages = [{ path = "chat_test", grant_capabilities = ["chat:chat:template.os"] }]
 # test_packages = [
@@ -17,22 +16,21 @@ timeout_secs = 5
 network_router = { port = 9001, defects = "None" }
 
 [[tests.nodes]]
-
 port = 8080
 home = "home/first"
 fake_node_name = "first.os"
 runtime_verbose = false
+is_testnet = true
 
 [[tests.nodes]]
-
 port = 8081
 home = "home/second"
 fake_node_name = "second.os"
 runtime_verbose = false
+is_testnet = true
 
 
 # [[tests]]
-#
 # setup_package_paths = []
 # test_packages = [
 #     { path = "key_value_test", grant_capabilities = [] }
@@ -42,8 +40,8 @@ runtime_verbose = false
 # network_router = { port = 9001, defects = "None" }
 #
 # [[tests.nodes]]
-#
 # port = 8080
 # home = "home/first"
 # fake_node_name = "first.os"
 # runtime_verbose = false
+# is_testnet = true

@@ -1,5 +1,6 @@
 runtime = { FetchVersion = "latest" }
 runtime_build_verbose = false
+runtime_build_release = true
 
 
 [[tests]]

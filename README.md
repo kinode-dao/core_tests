@@ -33,8 +33,8 @@ Each test will have the runtime reset to a fresh boot at the start.
 Each `test_package_paths` within can specify a series of tests to run without resetting the state between them.
 
 So in the example given above, the following will occur:
-1. Reset state & launch two fake nodes: `first.uq` and `second.uq`.
-2. Load `chat` into the "master" node: the first of the nodes specified, here, `first.uq`.
+1. Reset state & launch two fake nodes: `first.os` and `second.os`.
+2. Load `chat` into the "master" node: the first of the nodes specified, here, `first.os`.
 3. Run `sqlite_test`, `key_value_test`, and `chat_test` without resetting state.
 3. Reset state & launch node.
 4. Run `key_value_test`.

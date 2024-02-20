@@ -4,7 +4,7 @@ Tests for [Kinode core](https://github.com/kinode-dao/kinode) runtime and proces
 
 ## Warnings
 
-1. Following the directions below will place your Nectar node password and Alchemy API keys into your shell history.
+1. Following the directions below will place your Kinode password and Alchemy API keys into your shell history.
 2. The `kit run-tests` script deletes your node's filesystem: don't use on a node whose filesystem you care about.
 
 ## Usage

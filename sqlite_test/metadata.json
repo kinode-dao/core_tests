@@ -1,0 +1,16 @@
+{
+    "name": "Sqlite Test",
+    "description": "A test for the Sqlite DB.",
+    "image": "",
+    "properties": {
+        "package_name": "sqlite_test",
+        "current_version": "0.1.0",
+        "publisher": "template.os",
+        "mirrors": [],
+        "code_hashes": {
+            "0.1.0": ""
+        }
+    },
+    "external_url": "https://kinode.org",
+    "animation_url": ""
+}

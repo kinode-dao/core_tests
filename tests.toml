@@ -8,7 +8,6 @@ setup_package_paths = ["chat"]
 test_packages = [
     { path = "chat_test", "grant_capabilities" = ["chat:chat:template.os"] },
     { path = "key_value_test", grant_capabilities = ["kv:distro:sys"] },
-    #{ path = "sqlite_test", grant_capabilities = [] },
     { path = "sqlite_test", grant_capabilities = ["sqlite:distro:sys"] },
 ]
 timeout_secs = 5
@@ -35,7 +34,6 @@ setup_package_paths = []
 test_packages = [
     { path = "key_value_test", grant_capabilities = ["kv:distro:sys"] }
 ]
-mute_package_build = true
 timeout_secs = 5
 network_router = { port = 9001, defects = "None" }
 

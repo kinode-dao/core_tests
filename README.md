@@ -14,6 +14,8 @@ E.g., to run the tests here, use
 kit run-tests tests.toml
 ```
 
+See the [Kinode book](https://book.kinode.org/kit/run-tests.html) for a more complete discussion of `kit run-tests`.
+
 ## Discussion
 
 The above command will run the `key_value_test` twice, and the `chat_test` and `sqlite_test` once.

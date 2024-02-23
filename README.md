@@ -2,22 +2,16 @@
 
 Tests for [Kinode core](https://github.com/kinode-dao/kinode) runtime and processes.
 
-## Warnings
-
-1. Following the directions below will place your Kinode password and Alchemy API keys into your shell history.
-2. The `kit run-tests` script deletes your node's filesystem: don't use on a node whose filesystem you care about.
-
 ## Usage
 
 Requires:
 * https://github.com/kinode-dao/kinode
 * https://github.com/kinode-dao/kit
 
-After installing `kit`, modify `tests.toml` and use `kit run-tests` to run test processes.
-E.g., to run the `chat_test` here, run
+E.g., to run the tests here, use
 
 ```
-necdev run-tests tests.toml
+kit run-tests tests.toml
 ```
 
 ## Discussion

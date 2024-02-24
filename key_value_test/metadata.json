@@ -1,0 +1,16 @@
+{
+    "name": "Key-Value Test",
+    "description": "A test for the key-value DB.",
+    "image": "",
+    "properties": {
+        "package_name": "key_value_test",
+        "current_version": "0.1.0",
+        "publisher": "template.os",
+        "mirrors": [],
+        "code_hashes": {
+            "0.1.0": ""
+        }
+    },
+    "external_url": "https://kinode.org",
+    "animation_url": ""
+}

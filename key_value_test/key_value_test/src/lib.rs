@@ -1,7 +1,4 @@
-use serde::{Deserialize, Serialize};
-
-use uqbar_process_lib::{Address, ProcessId, Request, Response};
-use uqbar_process_lib::uqbar::process::standard as wit;
+use kinode_process_lib::{await_message, call_init, kv::open, Address, Message, Response};
 
 mod tester_types;
 use tester_types as tt;
@@ -14,112 +11,68 @@ wit_bindgen::generate!({
     },
 });
 
-mod key_value_types;
-use key_value_types as kv;
-
-const DB_NAME: &str = "foobar";
-
-fn handle_message (our: &Address) -> anyhow::Result<()> {
-    let (source, message) = wit::receive().unwrap();
-
-    if our.node != source.node {
-        return Err(anyhow::anyhow!(
-            "rejecting foreign Message from {:?}",
-            source,
-        ));
-    }
+fn handle_message(our: &Address) -> anyhow::Result<()> {
+    let message = await_message()?;
 
     match message {
-        wit::Message::Response(_) => { unimplemented!() },
-        wit::Message::Request(wit::Request { ipc, .. }) => {
-            match serde_json::from_slice(&ipc)? {
-                tt::TesterRequest::KernelMessage(_) => {},
-                tt::TesterRequest::GetFullMessage(_) => {},
+        Message::Response { .. } => {
+            unimplemented!()
+        }
+        Message::Request {
+            ref source,
+            ref body,
+            ..
+        } => {
+            if our.node != source.node {
+                return Err(anyhow::anyhow!(
+                    "rejecting foreign Message from {:?}",
+                    source,
+                ));
+            }
+            match serde_json::from_slice(body)? {
+                tt::TesterRequest::KernelMessage(_) => {}
+                tt::TesterRequest::GetFullMessage(_) => {}
                 tt::TesterRequest::Run { .. } => {
-                    wit::print_to_terminal(0, "key_value_test: a");
-                    let key_value_address = Address {
-                        node: our.node.clone(),
-                        process: ProcessId::new(Some("key_value"), "key_value", "uqbar"),
-                    };
+                    println!("kv_test: opening/creating db");
+                    let db = open(our.package_id(), "tester")?;
 
-                    let key = vec![1, 2, 3];
-                    let value = vec![4, 5, 6];
+                    println!("kv_test: set & get & delete");
+                    db.set(b"foo".to_vec(), b"bar".to_vec(), None)?;
 
-                    // New
-                    wit::print_to_terminal(0, "key_value_test: New 0");
-                    let _ = Request::new()
-                        .target(key_value_address.clone())
-                        .ipc(serde_json::to_vec(&kv::KeyValueMessage::New {
-                            db: DB_NAME.into()
-                        })?)
-                        .send_and_await_response(15)?.unwrap();
-                    wit::print_to_terminal(0, "key_value_test: New done");
+                    let value = db.get(b"foo".to_vec())?;
+                    assert_eq!(value, b"bar".to_vec());
 
-                    // Write
-                    wit::print_to_terminal(0, "key_value_test: Write 0");
-                    let _ = Request::new()
-                        .target(key_value_address.clone())
-                        .ipc(serde_json::to_vec(&kv::KeyValueMessage::Write {
-                            db: DB_NAME.into(),
-                            key: key.clone(),
-                        })?)
-                        .payload_bytes(value.clone())
-                        .send_and_await_response(15)?.unwrap();
-                    wit::print_to_terminal(0, "key_value_test: Write done");
+                    db.delete(b"foo".to_vec(), None)?;
 
-                    // Read
-                    wit::print_to_terminal(0, "key_value_test: Read 0");
-                    let response = Request::new()
-                        .target(key_value_address.clone())
-                        .ipc(serde_json::to_vec(&kv::KeyValueMessage::Read {
-                            db: DB_NAME.into(),
-                            key: key.clone(),
-                        })?)
-                        .send_and_await_response(15)?.unwrap();
-                    let payload = wit::get_payload().unwrap();
+                    let value = db.get(b"foo".to_vec());
 
-                    if payload.bytes != value {
-                        fail!("key_value_test");
-                    }
-
-                    wit::print_to_terminal(0, &format!("key_value_test: Read done: {:?}\n{:?}", response, payload));
+                    assert!(value.is_err());
 
                     Response::new()
-                        .ipc(serde_json::to_vec(&tt::TesterResponse::Pass).unwrap())
+                        .body(serde_json::to_vec(&tt::TesterResponse::Pass).unwrap())
                         .send()
                         .unwrap();
-                },
+                }
             }
 
             Ok(())
-        },
+        }
     }
 }
 
-struct Component;
-impl Guest for Component {
-    fn init(our: String) {
-        wit::print_to_terminal(0, "key_value_test: begin");
+call_init!(init);
 
-        let our = Address::from_str(&our).unwrap();
+fn init(our: Address) {
+    println!("kv_test: begin");
 
-        wit::create_capability(
-            &ProcessId::new(Some("key_value"), "key_value", "uqbar"),
-            &"\"messaging\"".into(),
-        );
+    loop {
+        match handle_message(&our) {
+            Ok(()) => {}
+            Err(e) => {
+                println!("kv_test: error: {:?}", e);
 
-        loop {
-            match handle_message(&our) {
-                Ok(()) => {},
-                Err(e) => {
-                    wit::print_to_terminal(0, format!(
-                        "key_value_test: error: {:?}",
-                        e,
-                    ).as_str());
-
-                    fail!("key_value_test");
-                },
-            };
-        }
+                fail!("kv_test");
+            }
+        };
     }
 }

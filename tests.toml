@@ -1,17 +1,15 @@
-runtime = { FetchVersion = "latest" }
-runtime_build_verbose = false
+runtime = { RepoPath = "~/git/kinode" }
+#runtime = { FetchVersion = "latest" }
 runtime_build_release = true
 
 
 [[tests]]
 setup_package_paths = ["chat"]
-test_packages = [{ path = "chat_test", grant_capabilities = ["chat:chat:template.os"] }]
-# test_packages = [
-#     { path = "chat_test", "grant_capabilities" = ["chat:chat:template.os"] }
-#     { path = "key_value_test", grant_capabilities = [] },
-#     { path = "sqlite_test", grant_capabilities = [] },
-# ]
-package_build_verbose = false
+test_packages = [
+    { path = "chat_test", "grant_capabilities" = ["chat:chat:template.os"] },
+    { path = "key_value_test", grant_capabilities = ["kv:distro:sys"] },
+    { path = "sqlite_test", grant_capabilities = ["sqlite:distro:sys"] },
+]
 timeout_secs = 5
 # Plan to include defects = Latency, Dropping, ..., All
 network_router = { port = 9001, defects = "None" }
@@ -20,29 +18,28 @@ network_router = { port = 9001, defects = "None" }
 port = 8080
 home = "home/first"
 fake_node_name = "first.os"
-runtime_verbose = false
 is_testnet = true
+runtime_verbosity = 0
 
 [[tests.nodes]]
 port = 8081
 home = "home/second"
 fake_node_name = "second.os"
-runtime_verbose = false
 is_testnet = true
+runtime_verbosity = 0
 
 
-# [[tests]]
-# setup_package_paths = []
-# test_packages = [
-#     { path = "key_value_test", grant_capabilities = [] }
-# ]
-# package_build_verbose = false
-# timeout_secs = 5
-# network_router = { port = 9001, defects = "None" }
-#
-# [[tests.nodes]]
-# port = 8080
-# home = "home/first"
-# fake_node_name = "first.os"
-# runtime_verbose = false
-# is_testnet = true
+[[tests]]
+setup_package_paths = []
+test_packages = [
+    { path = "key_value_test", grant_capabilities = ["kv:distro:sys"] }
+]
+timeout_secs = 5
+network_router = { port = 9001, defects = "None" }
+
+[[tests.nodes]]
+port = 8080
+home = "home/first"
+fake_node_name = "first.os"
+is_testnet = true
+runtime_verbosity = 0

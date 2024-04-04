@@ -6,9 +6,6 @@ use tester_types as tt;
 wit_bindgen::generate!({
     path: "wit",
     world: "process",
-    exports: {
-        world: Component,
-    },
 });
 
 fn handle_message(our: &Address) -> anyhow::Result<()> {
@@ -34,7 +31,7 @@ fn handle_message(our: &Address) -> anyhow::Result<()> {
                 tt::TesterRequest::GetFullMessage(_) => {}
                 tt::TesterRequest::Run { .. } => {
                     println!("sqlite_test: opening/creating db");
-                    let db = open(our.package_id(), "tester")?;
+                    let db = open(our.package_id(), "tester", None)?;
 
                     println!("sqlite_test: create table");
                     let create_table_statement =
@@ -75,9 +72,8 @@ fn handle_message(our: &Address) -> anyhow::Result<()> {
 }
 
 call_init!(init);
-
 fn init(our: Address) {
-    println!("sqlite_test: begin");
+    println!("begin");
 
     loop {
         match handle_message(&our) {

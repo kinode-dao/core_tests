@@ -1,7 +1,6 @@
-use std::str::FromStr;
 use serde::{Deserialize, Serialize};
 
-use kinode_process_lib::{await_message, print_to_terminal, Address, Message, ProcessId, Request, Response};
+use kinode_process_lib::{await_message, call_init, print_to_terminal, Address, Message, ProcessId, Request, Response};
 
 mod tester_types;
 use tester_types as tt;
@@ -9,9 +8,6 @@ use tester_types as tt;
 wit_bindgen::generate!({
     path: "wit",
     world: "process",
-    exports: {
-        world: Component,
-    },
 });
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -97,26 +93,21 @@ fn handle_message (our: &Address) -> anyhow::Result<()> {
     }
 }
 
+call_init!(init);
+fn init(our: Address) {
+    print_to_terminal(0, "begin");
 
-struct Component;
-impl Guest for Component {
-    fn init(our: String) {
-        print_to_terminal(0, "chat_test: begin");
+    loop {
+        match handle_message(&our) {
+            Ok(()) => {},
+            Err(e) => {
+                print_to_terminal(0, format!(
+                    "chat_test: error: {:?}",
+                    e,
+                ).as_str());
 
-        let our = Address::from_str(&our).unwrap();
-
-        loop {
-            match handle_message(&our) {
-                Ok(()) => {},
-                Err(e) => {
-                    print_to_terminal(0, format!(
-                        "chat_test: error: {:?}",
-                        e,
-                    ).as_str());
-
-                    fail!("chat_test");
-                },
-            };
-        }
+                fail!("chat_test");
+            },
+        };
     }
 }

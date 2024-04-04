@@ -1,6 +1,6 @@
 {
-    "name": "Chat",
-    "description": "A simple chat app.",
+    "name": "chat",
+    "description": "",
     "image": "",
     "properties": {
         "package_name": "chat",
@@ -11,6 +11,6 @@
             "0.1.0": ""
         }
     },
-    "external_url": "https://kinode.org",
+    "external_url": "",
     "animation_url": ""
 }

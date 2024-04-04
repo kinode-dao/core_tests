@@ -1,6 +1,5 @@
 runtime = { RepoPath = "~/git/kinode" }
 #runtime = { FetchVersion = "latest" }
-mute_runtime_build = true
 runtime_build_release = true
 
 
@@ -11,7 +10,6 @@ test_packages = [
     { path = "key_value_test", grant_capabilities = ["kv:distro:sys"] },
     { path = "sqlite_test", grant_capabilities = ["sqlite:distro:sys"] },
 ]
-mute_package_build = true
 timeout_secs = 5
 # Plan to include defects = Latency, Dropping, ..., All
 network_router = { port = 9001, defects = "None" }
@@ -20,7 +18,6 @@ network_router = { port = 9001, defects = "None" }
 port = 8080
 home = "home/first"
 fake_node_name = "first.os"
-mute_runtime = false
 is_testnet = true
 runtime_verbosity = 0
 
@@ -28,7 +25,6 @@ runtime_verbosity = 0
 port = 8081
 home = "home/second"
 fake_node_name = "second.os"
-mute_runtime = false
 is_testnet = true
 runtime_verbosity = 0
 
@@ -38,7 +34,6 @@ setup_package_paths = []
 test_packages = [
     { path = "key_value_test", grant_capabilities = ["kv:distro:sys"] }
 ]
-mute_package_build = true
 timeout_secs = 5
 network_router = { port = 9001, defects = "None" }
 
@@ -46,6 +41,5 @@ network_router = { port = 9001, defects = "None" }
 port = 8080
 home = "home/first"
 fake_node_name = "first.os"
-mute_runtime = false
 is_testnet = true
 runtime_verbosity = 0

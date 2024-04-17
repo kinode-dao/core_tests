@@ -18,14 +18,12 @@ network_router = { port = 9001, defects = "None" }
 port = 8080
 home = "home/first"
 fake_node_name = "first.os"
-is_testnet = true
 runtime_verbosity = 0
 
 [[tests.nodes]]
 port = 8081
 home = "home/second"
 fake_node_name = "second.os"
-is_testnet = true
 runtime_verbosity = 0
 
 
@@ -41,5 +39,4 @@ network_router = { port = 9001, defects = "None" }
 port = 8080
 home = "home/first"
 fake_node_name = "first.os"
-is_testnet = true
 runtime_verbosity = 0

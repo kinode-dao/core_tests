@@ -6,9 +6,6 @@ use tester_types as tt;
 wit_bindgen::generate!({
     path: "wit",
     world: "process",
-    exports: {
-        world: Component,
-    },
 });
 
 fn handle_message(our: &Address) -> anyhow::Result<()> {
@@ -34,17 +31,17 @@ fn handle_message(our: &Address) -> anyhow::Result<()> {
                 tt::TesterRequest::GetFullMessage(_) => {}
                 tt::TesterRequest::Run { .. } => {
                     println!("kv_test: opening/creating db");
-                    let db = open(our.package_id(), "tester")?;
+                    let db = open(our.package_id(), "tester", None)?;
 
                     println!("kv_test: set & get & delete");
-                    db.set(b"foo".to_vec(), b"bar".to_vec(), None)?;
+                    db.set(b"foo", b"bar", None)?;
 
-                    let value = db.get(b"foo".to_vec())?;
-                    assert_eq!(value, b"bar".to_vec());
+                    let value = db.get(b"foo")?;
+                    assert_eq!(&value, b"bar");
 
-                    db.delete(b"foo".to_vec(), None)?;
+                    db.delete(b"foo", None)?;
 
-                    let value = db.get(b"foo".to_vec());
+                    let value = db.get(b"foo");
 
                     assert!(value.is_err());
 
@@ -61,9 +58,8 @@ fn handle_message(our: &Address) -> anyhow::Result<()> {
 }
 
 call_init!(init);
-
 fn init(our: Address) {
-    println!("kv_test: begin");
+    println!("begin");
 
     loop {
         match handle_message(&our) {

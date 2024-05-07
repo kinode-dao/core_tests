@@ -11,19 +11,18 @@ test_packages = [
     { path = "sqlite_test", grant_capabilities = ["sqlite:distro:sys"] },
 ]
 timeout_secs = 5
-# Plan to include defects = Latency, Dropping, ..., All
-network_router = { port = 9001, defects = "None" }
+fakechain_router = 8545
 
 [[tests.nodes]]
 port = 8080
 home = "home/first"
-fake_node_name = "first.os"
+fake_node_name = "first.dev"
 runtime_verbosity = 0
 
 [[tests.nodes]]
 port = 8081
 home = "home/second"
-fake_node_name = "second.os"
+fake_node_name = "second.dev"
 runtime_verbosity = 0
 
 
@@ -33,10 +32,10 @@ test_packages = [
     { path = "key_value_test", grant_capabilities = ["kv:distro:sys"] }
 ]
 timeout_secs = 5
-network_router = { port = 9001, defects = "None" }
+fakechain_router = 8545
 
 [[tests.nodes]]
 port = 8080
 home = "home/first"
-fake_node_name = "first.os"
+fake_node_name = "first.dev"
 runtime_verbosity = 0

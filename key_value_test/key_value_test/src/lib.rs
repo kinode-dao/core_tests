@@ -1,60 +1,53 @@
-use kinode_process_lib::{await_message, call_init, kv::open, Address, Message, Response};
+use crate::kinode::process::tester::{Request as TesterRequest, Response as TesterResponse, FailResponse};
+use kinode_process_lib::{await_message, call_init, kv::open, Address, Response};
 
-mod tester_types;
-use tester_types as tt;
+mod tester_lib;
 
 wit_bindgen::generate!({
-    path: "wit",
-    world: "process",
+    path: "target/wit",
+    world: "tester-sys-v0",
+    generate_unused_types: true,
+    additional_derives: [PartialEq, serde::Deserialize, serde::Serialize, process_macros::SerdeJsonInto],
 });
 
 fn handle_message(our: &Address) -> anyhow::Result<()> {
     let message = await_message()?;
 
-    match message {
-        Message::Response { .. } => {
-            unimplemented!()
-        }
-        Message::Request {
-            ref source,
-            ref body,
-            ..
-        } => {
-            if our.node != source.node {
-                return Err(anyhow::anyhow!(
-                    "rejecting foreign Message from {:?}",
-                    source,
-                ));
-            }
-            match serde_json::from_slice(body)? {
-                tt::TesterRequest::KernelMessage(_) => {}
-                tt::TesterRequest::GetFullMessage(_) => {}
-                tt::TesterRequest::Run { .. } => {
-                    println!("kv_test: opening/creating db");
-                    let db = open(our.package_id(), "tester", None)?;
+    if !message.is_request() {
+        unimplemented!();
+    }
 
-                    println!("kv_test: set & get & delete");
-                    db.set(b"foo", b"bar", None)?;
+    if our.node != message.source().node {
+        return Err(anyhow::anyhow!(
+            "rejecting foreign Message from {:?}",
+            message.source(),
+        ));
+    }
+    match message.body().try_into()? {
+        TesterRequest::Run { .. } => {
+            println!("kv_test: opening/creating db");
+            let db = open(our.package_id(), "tester", None)?;
 
-                    let value = db.get(b"foo")?;
-                    assert_eq!(&value, b"bar");
+            println!("kv_test: set & get & delete");
+            db.set(b"foo", b"bar", None)?;
 
-                    db.delete(b"foo", None)?;
+            let value = db.get(b"foo")?;
+            assert_eq!(&value, b"bar");
 
-                    let value = db.get(b"foo");
+            db.delete(b"foo", None)?;
 
-                    assert!(value.is_err());
+            let value = db.get(b"foo");
 
-                    Response::new()
-                        .body(serde_json::to_vec(&tt::TesterResponse::Pass).unwrap())
-                        .send()
-                        .unwrap();
-                }
-            }
+            assert!(value.is_err());
 
-            Ok(())
+            Response::new()
+                .body(TesterResponse::Run(Ok(())))
+                .send()
+                .unwrap();
         }
     }
+
+    Ok(())
 }
 
 call_init!(init);

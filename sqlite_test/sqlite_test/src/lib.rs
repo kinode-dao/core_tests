@@ -1,5 +1,7 @@
-use crate::kinode::process::tester::{Request as TesterRequest, Response as TesterResponse, FailResponse};
-use kinode_process_lib::{await_message, call_init, sqlite::open, Address, Message, Response};
+use crate::kinode::process::tester::{
+    FailResponse, Request as TesterRequest, Response as TesterResponse,
+};
+use kinode_process_lib::{await_message, call_init, sqlite::open, Address, Response};
 
 mod tester_lib;
 
@@ -30,15 +32,13 @@ fn handle_message(our: &Address) -> anyhow::Result<()> {
 
             println!("sqlite_test: create table");
             let create_table_statement =
-                "CREATE TABLE kinos (id INTEGER PRIMARY KEY, name TEXT NOT NULL);"
-                    .to_string();
+                "CREATE TABLE kinos (id INTEGER PRIMARY KEY, name TEXT NOT NULL);".to_string();
 
             db.write(create_table_statement, vec![], None)?;
 
             println!("sqlite_test: insert rows");
 
-            let insert_statement =
-                "INSERT INTO kinos (name) VALUES (?), (?), (?);".to_string();
+            let insert_statement = "INSERT INTO kinos (name) VALUES (?), (?), (?);".to_string();
             let params = vec![
                 serde_json::Value::String("cinecafe".to_string()),
                 serde_json::Value::String("lumiere".to_string()),

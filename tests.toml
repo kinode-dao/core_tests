@@ -9,6 +9,8 @@ test_packages = [
     { path = "key_value_test", grant_capabilities = ["kv:distro:sys"] },
     { path = "sqlite_test", grant_capabilities = ["sqlite:distro:sys"] },
 ]
+setup_scripts = []
+test_scripts = []
 timeout_secs = 5
 fakechain_router = 8545
 
@@ -30,6 +32,8 @@ setup_package_paths = []
 test_packages = [
     { path = "key_value_test", grant_capabilities = ["kv:distro:sys"] }
 ]
+setup_scripts = []
+test_scripts = []
 timeout_secs = 5
 fakechain_router = 8545
 

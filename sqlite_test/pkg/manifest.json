@@ -4,8 +4,12 @@
         "process_wasm_path": "/sqlite_test.wasm",
         "on_exit": "Restart",
         "request_networking": false,
-        "request_capabilities": [],
-        "grant_capabilities": [],
+        "request_capabilities": [
+            "sqlite:distro:sys"
+        ],
+        "grant_capabilities": [
+            "sqlite:distro:sys"
+        ],
         "public": true
     }
 ]

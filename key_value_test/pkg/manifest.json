@@ -4,8 +4,12 @@
         "process_wasm_path": "/key_value_test.wasm",
         "on_exit": "Restart",
         "request_networking": false,
-        "request_capabilities": [],
-        "grant_capabilities": [],
+        "request_capabilities": [
+            "kv:distro:sys"
+        ],
+        "grant_capabilities": [
+            "kv:distro:sys"
+        ],
         "public": true
     }
 ]

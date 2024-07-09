@@ -16,13 +16,13 @@ fakechain_router = 8545
 port = 8080
 home = "home/first"
 fake_node_name = "first.dev"
-runtime_verbosity = 0
+runtime_verbosity = 2
 
 [[tests.nodes]]
 port = 8081
 home = "home/second"
 fake_node_name = "second.dev"
-runtime_verbosity = 0
+runtime_verbosity = 2
 
 
 [[tests]]
@@ -37,4 +37,4 @@ fakechain_router = 8545
 port = 8080
 home = "home/first"
 fake_node_name = "first.dev"
-runtime_verbosity = 0
+runtime_verbosity = 2

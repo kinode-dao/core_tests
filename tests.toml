@@ -5,6 +5,7 @@ runtime_build_release = false
 
 
 [[tests]]
+dependency_package_paths = []
 setup_packages = []
 setup_scripts = []
 test_package_paths = ["key_value_test",  "sqlite_test"]
@@ -26,6 +27,7 @@ runtime_verbosity = 2
 
 
 [[tests]]
+dependency_package_paths = []
 setup_packages = []
 test_package_paths = ["key_value_test"]
 setup_scripts = []
